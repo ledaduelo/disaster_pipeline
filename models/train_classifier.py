@@ -48,8 +48,9 @@ def load_data(database_filepath):
     
     # define features and label arrays
     X = df['message']
-    # Y = df.iloc[:,4:]
-    Y = df.drop(['original','genre','message','offer','request'], axis=1)
+    Y = df.iloc[:,4:]
+    # Y = df.iloc[:,4:].values
+    #Y = df.drop(['original','genre','message','offer','request'], axis=1)
     Y= Y.astype(int)
     category_names = list(df.columns[4:])
 
@@ -228,9 +229,12 @@ def build_model():
 
 def evaluate_model(model, X_test, Y_test, category_names):
     Y_pred = model.predict(X_test)
-    for i in range(len(category_names)):
-        print('Category: {} '.format(category_names[i]))
-        print(classification_report(Y_test.iloc[:, i].values, Y_pred[:, i]))
+    print(classification_report(Y_test.iloc[:,1:].values, np.array([x[1:] for x in Y_pred]), target_names=category_names))
+    #for i in range(len(category_names)):
+        #print('Category: {} '.format(category_names[i]))
+        #print(classification_report(Y_test.iloc[:, i].values, Y_pred[:, i]))
+        
+        
 
 def save_model(model, model_filepath):
     """ 
@@ -244,8 +248,8 @@ def main():
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
-        print(X.head(2))
-        print(Y.head(2))
+        #print(X.head(2))
+        #print(Y.head(2))
         print(category_names)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
